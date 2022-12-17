@@ -25,6 +25,8 @@
    // PC Program Counter
    $next_pc[31:0] = $reset ? 0 : 
                     $taken_br ? $br_tgt_pc :
+                    $is_jal ? $br_tgt_pc :
+                    $is_jalr ? $jalr_tgt_pc :
                     $pc[31:0] + 32'd4;
    $pc[31:0] = >>1$next_pc;
    //IMem Intruction Memory
@@ -137,7 +139,7 @@
                    $is_sra ? $sra_rslt[31:0] :
                    $is_srai ? $srai_rslt[31:0] :
                               32'b0;
-   //Branch Logic
+   //Branch Logic and Jump Logic
    $taken_br = $is_beq ? $src1_value == $src2_value  :
                $is_bne ? $src1_value != $src2_value  :
                $is_blt ? ($src1_value < $src2_value) ^ ($src1_value[31] != $src2_value[31]) :
@@ -147,6 +149,7 @@
                1'b0;
                
    $br_tgt_pc[31:0] = $pc + $imm;
+   $jalr_tgt_pc[31:0] = $src1_value + $imm;
    // ...
    
    
